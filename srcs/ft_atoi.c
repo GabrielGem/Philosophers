@@ -6,14 +6,14 @@
 /*   By: gabrgarc <gabrgarc@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/17 14:23:35 by gabrgarc          #+#    #+#             */
-/*   Updated: 2026/03/17 15:43:20 by gabrgarc         ###   ########.fr       */
+/*   Updated: 2026/03/18 17:41:34 by gabrgarc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 static int	ft_isjumpable(char c);
 static int	ft_isdigit(char c);
 
-int	ft_atoi(char *str)
+long	ft_atoi(char *str)
 {
 	long	number;
 	int		signal;
@@ -30,7 +30,7 @@ int	ft_atoi(char *str)
 	number = 0;
 	while (*str && ft_isdigit(*str))
 	{
-		number = number * 10 + *str - '0';
+		number = (number * 10) + (*str - '0');
 		str++;
 	}
 	return (number * signal);
