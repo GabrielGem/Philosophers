@@ -7,7 +7,10 @@ THDFLAG = -lpthread
 SOURCES = \
 	main.c \
 	ft_atoi.c \
-	routine.c
+	ft_msleep.c \
+	routine.c \
+	routine_monitor.c \
+	get_current_time.c
 
 SRCS := $(addprefix srcs/, $(SOURCES))
 
@@ -20,7 +23,7 @@ $(NAME): $(OBJS)
 	$(CC) $(CFLAGS) $^ -o $@ $(THDFLAG)
 
 $(OBJSDIR)%.o: %.c
-	mkdir -p $(dir $@)
+	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) $(INCLUDE) -c $< -o $@
 
 clean:
@@ -35,7 +38,7 @@ debug: CFLAGS += -fsanitize=thread -g
 debug: re
 
 hel:
-	valgrind --tool=helgrind ./$(NAME)
+	valgrind --tool=helgrind ./$(NAME) 3 310 200 200
 
 val:
 	valgrind --leak-check=full --track-origins=yes \
