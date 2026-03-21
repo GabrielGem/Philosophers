@@ -1,24 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_atoi.c                                          :+:      :+:    :+:   */
+/*   ft_atol.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: gabrgarc <gabrgarc@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/17 14:23:35 by gabrgarc          #+#    #+#             */
-/*   Updated: 2026/03/18 17:41:34 by gabrgarc         ###   ########.fr       */
+/*   Updated: 2026/03/21 19:10:45 by gabrgarc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-static int	ft_isjumpable(char c);
-static int	ft_isdigit(char c);
+#include "philo.h"
 
-long	ft_atoi(char *str)
+long	ft_atol(char *str)
 {
 	long	number;
 	int		signal;
 
-	while (ft_isjumpable(*str))
+	while (*str == ' ' || (*str >= '\t' && *str <= '\r'))
 		str++;
 	signal = 1;
 	if (*str == '+' || *str == '-')
@@ -34,14 +33,4 @@ long	ft_atoi(char *str)
 		str++;
 	}
 	return (number * signal);
-}
-
-static int	ft_isjumpable(char c)
-{
-	return (c == ' ' || (c >= '\0' && c <= 31));
-}
-
-static int	ft_isdigit(char c)
-{
-	return (c >= '0' || c <= '9');
 }
