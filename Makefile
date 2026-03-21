@@ -6,10 +6,15 @@ THDFLAG = -lpthread
 
 SOURCES = \
 	main.c \
-	ft_atoi.c \
-	ft_msleep.c \
 	routine.c \
 	routine_monitor.c \
+	valid_args.c \
+	dead.c \
+	log_print.c \
+	end_simulation.c \
+	ft_atol.c \
+	ft_isdigit.c \
+	ft_msleep.c \
 	get_current_time.c
 
 SRCS := $(addprefix srcs/, $(SOURCES))
@@ -42,6 +47,6 @@ hel:
 
 val:
 	valgrind --leak-check=full --track-origins=yes \
-	--show-leak-kinds=all ./$(NAME)
+	--show-leak-kinds=all ./$(NAME) 3 210 200 200
 
 .PHONY: all clean fclean re
