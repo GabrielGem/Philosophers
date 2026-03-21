@@ -6,74 +6,98 @@
 /*   By: gabrgarc <gabrgarc@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/09 11:05:39 by gabrgarc          #+#    #+#             */
-/*   Updated: 2026/03/18 18:32:23 by gabrgarc         ###   ########.fr       */
+/*   Updated: 2026/03/21 19:14:07 by gabrgarc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-static void set_the_table(t_data *table, char **argv);
-static t_philo	*list_the_guests(t_data *table);
+static int	init_table(t_data *table, char **argv);
+static int	init_philos(t_data *table);
+static void	run_simulation(t_data *table);
 
 int	main(int argc, char **argv)
 {
 	t_data	table;
-	int		i;
 
-	if (argc < 5 || argc > 6)
-		return (0); // TODO message showing how it works
-	set_the_table(&table, (argv + 1));
-	i = -1;
-	while (++i < table.number_of_philosophers)
-		pthread_create(&table.philos[i].thread_id, NULL, routine, &table.philos[i]);
-	pthread_create(&table.monitor, NULL, routine_monitor, &table);
-	i = -1;
-	while (++i < table.number_of_philosophers)
-		pthread_join(table.philos[i].thread_id, NULL);
-	pthread_join(table.monitor, NULL);
+	if (!valid_args(argc, argv))
+		return (1);
+	if (!init_table(&table, (argv + 1)))
+		return (1);
+	run_simulation(&table);
+	end_simulation(&table);
 	return (0);
 }
 
-static void set_the_table(t_data *table, char **argv)
+static int	init_table(t_data *table, char **argv)
 {
 	int	i;
-	struct timeval	start_tv;
 
-	//TODO validation for negative arguments
-	table->number_of_philosophers = ft_atoi(argv[0]);
-	table->time_to_die = ft_atoi(argv[1]);
-	table->time_to_eat = ft_atoi(argv[2]);
-	table->time_to_sleep = ft_atoi(argv[3]);
+	table->number_of_philosophers = ft_atol(argv[0]);
+	table->time_to_die = ft_atol(argv[1]);
+	table->time_to_eat = ft_atol(argv[2]);
+	table->time_to_sleep = ft_atol(argv[3]);
 	if (argv[4])
-		table->number_of_times_each_philosopher_must_eat = ft_atoi(argv[4]);
+		table->number_of_times_each_philosopher_must_eat = ft_atol(argv[4]);
+	else
+		table->number_of_times_each_philosopher_must_eat = -1;
 	table->dead = 0;
-	table->philos = list_the_guests(table);
-	table->forks = calloc(table->number_of_philosophers, sizeof(pthread_mutex_t));
+	table->start_sim = get_current_time();
+	table->forks = calloc(table->number_of_philosophers, \
+sizeof(pthread_mutex_t));
+	if (!table->forks)
+		return (0);
 	i = -1;
 	while (++i < table->number_of_philosophers)
 		pthread_mutex_init(&table->forks[i], NULL);
+	if (!init_philos(table))
+		return (0);
 	pthread_mutex_init(&table->log_lock, NULL);
-	table->start_sim = get_current_time();
 	pthread_mutex_init(&table->dead_lock, NULL);
+	return (1);
 }
 
-static t_philo	*list_the_guests(t_data *table)
+static int	init_philos(t_data *table)
 {
-	t_philo	*list;
-	t_philo *guest;
-	int	i;
+	int		i;
+	int		n;
 
-	list = calloc(table->number_of_philosophers, sizeof(t_philo));
+	n = table->number_of_philosophers;
+	table->philos = calloc(n, sizeof(t_philo));
+	if (!table->philos)
+		return (0);
+	i = 0;
+	while (i < n)
+	{
+		table->philos[i].table = table;
+		table->philos[i].id = i + 1;
+		table->philos[i].last_meal = get_current_time();
+		table->philos[i].fork_right = &table->forks[i % n];
+		table->philos[i].fork_left = &table->forks[(i + 1) % n];
+		pthread_mutex_init(&table->philos[i].meal_lock, NULL);
+		i++;
+	}
+	return (1);
+}
+
+static void	run_simulation(t_data *table)
+{
+	int		i;
+	t_philo	*philos;
+
+	philos = table->philos;
 	i = 0;
 	while (i < table->number_of_philosophers)
 	{
-		guest = calloc(1, sizeof(t_philo)); // pthread id?
-		//guest->thread_id = malloc(sizeof(pthread_t));
-		pthread_mutex_init(&guest->meal_lock, NULL);
-		guest->id = i + 1;
-		guest->table = table;
-		list[i] = *guest;
+		pthread_create(&philos[i].thread_id, NULL, routine, &philos[i]);
 		i++;
 	}
-	return (list);
+	pthread_create(&table->monitor, NULL, routine_monitor, table);
+	i = 0;
+	while (i < table->number_of_philosophers)
+	{
+		pthread_join(philos[i].thread_id, NULL);
+		i++;
+	}
+	pthread_join(table->monitor, NULL);
 }
