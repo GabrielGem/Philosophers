@@ -6,7 +6,7 @@
 /*   By: gabrgarc <gabrgarc@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/09 11:05:39 by gabrgarc          #+#    #+#             */
-/*   Updated: 2026/03/24 15:53:35 by gabrgarc         ###   ########.fr       */
+/*   Updated: 2026/03/24 17:37:57 by gabrgarc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,8 +74,8 @@ static int	init_philos(t_data *table)
 		table->philos[i].table = table;
 		table->philos[i].id = i + 1;
 		table->philos[i].last_meal = last_meal;
-		table->philos[i].fork_right = &table->forks[(i - 1 + n) % n];
-		table->philos[i].fork_left = &table->forks[i % n];
+		table->philos[i].fork_right = &table->forks[i];
+		table->philos[i].fork_left = &table->forks[(i + 1) % n];
 		pthread_mutex_init(&table->philos[i].meal_lock, NULL);
 		i++;
 	}
