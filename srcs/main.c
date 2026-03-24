@@ -6,7 +6,7 @@
 /*   By: gabrgarc <gabrgarc@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/09 11:05:39 by gabrgarc          #+#    #+#             */
-/*   Updated: 2026/03/21 19:14:07 by gabrgarc         ###   ########.fr       */
+/*   Updated: 2026/03/24 15:53:35 by gabrgarc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,19 +61,21 @@ static int	init_philos(t_data *table)
 {
 	int		i;
 	int		n;
+	long	last_meal;
 
 	n = table->number_of_philosophers;
 	table->philos = calloc(n, sizeof(t_philo));
 	if (!table->philos)
 		return (0);
+	last_meal = get_current_time();
 	i = 0;
 	while (i < n)
 	{
 		table->philos[i].table = table;
 		table->philos[i].id = i + 1;
-		table->philos[i].last_meal = get_current_time();
-		table->philos[i].fork_right = &table->forks[i % n];
-		table->philos[i].fork_left = &table->forks[(i + 1) % n];
+		table->philos[i].last_meal = last_meal;
+		table->philos[i].fork_right = &table->forks[(i - 1 + n) % n];
+		table->philos[i].fork_left = &table->forks[i % n];
 		pthread_mutex_init(&table->philos[i].meal_lock, NULL);
 		i++;
 	}
