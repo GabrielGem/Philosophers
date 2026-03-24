@@ -6,7 +6,7 @@
 /*   By: gabrgarc <gabrgarc@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/16 17:29:17 by gabrgarc          #+#    #+#             */
-/*   Updated: 2026/03/24 15:53:17 by gabrgarc         ###   ########.fr       */
+/*   Updated: 2026/03/24 18:19:53 by gabrgarc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,8 @@ void	*routine(void *arg)
 		ft_msleep(philo->table->time_to_die);
 		return (NULL);
 	}
+	if (philo->id % 2 == 0)
+		ft_msleep(100);
 	while (1)
 	{
 		if (pick_up_forks(philo))
@@ -44,29 +46,29 @@ void	*routine(void *arg)
 
 static int	pick_up_forks(t_philo *philo)
 {
+	void	*first;
+	void	*second;
+
+	if (philo->id % 2 == 0)
+	{
+		first = philo->fork_right;
+		second = philo->fork_left;
+	}
+	else
+	{
+		first = philo->fork_left;
+		second = philo->fork_right;
+	}
 	if (dead(philo->table))
 		return (1);
-	if (philo->id == philo->table->number_of_philosophers)
-	{
-		pthread_mutex_lock(philo->fork_left);
-		if (dead(philo->table))
-		{
-			pthread_mutex_unlock(philo->fork_left);
-			return (1);
-		}
-		log_print(philo, TAKEN_FORK);
-		pthread_mutex_lock(philo->fork_right);
-		log_print(philo, TAKEN_FORK);
-		return (0);
-	}
-	pthread_mutex_lock(philo->fork_right);
+	pthread_mutex_lock(first);
 	log_print(philo, TAKEN_FORK);
 	if (dead(philo->table))
 	{
-		pthread_mutex_unlock(philo->fork_right);
+		pthread_mutex_unlock(first);
 		return (1);
 	}
-	pthread_mutex_lock(philo->fork_left);
+	pthread_mutex_lock(second);
 	log_print(philo, TAKEN_FORK);
 	return (0);
 }
