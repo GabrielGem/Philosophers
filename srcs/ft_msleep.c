@@ -6,7 +6,7 @@
 /*   By: gabrgarc <gabrgarc@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/16 15:02:35 by gabrgarc          #+#    #+#             */
-/*   Updated: 2026/03/21 19:18:13 by gabrgarc         ###   ########.fr       */
+/*   Updated: 2026/03/24 15:00:03 by gabrgarc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,5 +38,5 @@ void	ft_msleep(long msec)
 static long	get_elapsed_time_us(struct timeval start, struct timeval end)
 {
 	return ((end.tv_sec - start.tv_sec) * 1000000L + \
-(end.tv_usec - start.tv_usec));
+			(end.tv_usec - start.tv_usec));
 }
