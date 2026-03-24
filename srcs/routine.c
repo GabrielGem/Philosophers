@@ -6,7 +6,7 @@
 /*   By: gabrgarc <gabrgarc@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/16 17:29:17 by gabrgarc          #+#    #+#             */
-/*   Updated: 2026/03/21 17:47:51 by gabrgarc         ###   ########.fr       */
+/*   Updated: 2026/03/24 15:53:17 by gabrgarc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,11 @@ static int	pick_up_forks(t_philo *philo)
 static int	eat(t_philo *philo)
 {
 	if (dead(philo->table))
+	{
+		pthread_mutex_unlock(philo->fork_right);
+		pthread_mutex_unlock(philo->fork_left);
 		return (1);
+	}
 	log_print(philo, EATING);
 	pthread_mutex_lock(&philo->meal_lock);
 	philo->last_meal = get_current_time();
