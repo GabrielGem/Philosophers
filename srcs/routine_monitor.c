@@ -6,7 +6,7 @@
 /*   By: gabrgarc <gabrgarc@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/18 14:38:36 by gabrgarc          #+#    #+#             */
-/*   Updated: 2026/03/21 19:09:27 by gabrgarc         ###   ########.fr       */
+/*   Updated: 2026/03/24 16:31:55 by gabrgarc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ static int	check_death(t_data *table, int i)
 {
 	long	timestamp;
 	int		meals;
+	long	now;
 
 	pthread_mutex_lock(&table->philos[i].meal_lock);
 	timestamp = get_current_time() - table->philos[i].last_meal;
@@ -53,7 +54,10 @@ static int	check_death(t_data *table, int i)
 		pthread_mutex_lock(&table->dead_lock);
 		table->dead = 1;
 		pthread_mutex_unlock(&table->dead_lock);
-		log_print(&table->philos[i], DIED);
+		pthread_mutex_lock(&table->log_lock);
+		now = get_current_time();
+		printf("%ld %d died\n", now - table->start_sim, table->philos[i].id);
+		pthread_mutex_unlock(&table->log_lock);
 		return (1);
 	}
 	return (0);
@@ -67,7 +71,7 @@ static int	all_satisfied(t_data *table)
 	if (table->number_of_times_each_philosopher_must_eat == -1)
 		return (0);
 	i = 0;
-	while (i < table->number_of_times_each_philosopher_must_eat)
+	while (i < table->number_of_philosophers)
 	{
 		pthread_mutex_lock(&table->philos[i].meal_lock);
 		meals = table->philos[i].number_of_meals;
