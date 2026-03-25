@@ -6,7 +6,7 @@
 /*   By: gabrgarc <gabrgarc@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/09 11:06:33 by gabrgarc          #+#    #+#             */
-/*   Updated: 2026/03/21 19:12:26 by gabrgarc         ###   ########.fr       */
+/*   Updated: 2026/03/25 10:03:14 by gabrgarc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ typedef struct s_data
 	long			time_to_sleep;
 	int				number_of_times_each_philosopher_must_eat;
 	int				dead;
+	int				start;
 	t_philo			*philos;
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	log_lock;
