@@ -6,7 +6,7 @@
 /*   By: gabrgarc <gabrgarc@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/03/09 11:05:39 by gabrgarc          #+#    #+#             */
-/*   Updated: 2026/03/24 17:37:57 by gabrgarc         ###   ########.fr       */
+/*   Updated: 2026/03/25 10:30:14 by gabrgarc         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ static int	init_table(t_data *table, char **argv)
 		table->number_of_times_each_philosopher_must_eat = -1;
 	table->dead = 0;
 	table->start_sim = get_current_time();
+	table->start = 1;
 	table->forks = calloc(table->number_of_philosophers, \
 sizeof(pthread_mutex_t));
 	if (!table->forks)
@@ -61,19 +62,17 @@ static int	init_philos(t_data *table)
 {
 	int		i;
 	int		n;
-	long	last_meal;
 
 	n = table->number_of_philosophers;
 	table->philos = calloc(n, sizeof(t_philo));
 	if (!table->philos)
 		return (0);
-	last_meal = get_current_time();
 	i = 0;
 	while (i < n)
 	{
 		table->philos[i].table = table;
 		table->philos[i].id = i + 1;
-		table->philos[i].last_meal = last_meal;
+		table->philos[i].last_meal = table->start_sim;
 		table->philos[i].fork_right = &table->forks[i];
 		table->philos[i].fork_left = &table->forks[(i + 1) % n];
 		pthread_mutex_init(&table->philos[i].meal_lock, NULL);
@@ -94,6 +93,7 @@ static void	run_simulation(t_data *table)
 		pthread_create(&philos[i].thread_id, NULL, routine, &philos[i]);
 		i++;
 	}
+	table->start = 0;
 	pthread_create(&table->monitor, NULL, routine_monitor, table);
 	i = 0;
 	while (i < table->number_of_philosophers)
